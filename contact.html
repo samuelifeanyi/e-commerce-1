@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSIG | Private Concierge Atelier</title>
+    
+    <!-- Scripts & Frameworks -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = { 
+            darkMode: 'class', 
+            theme: { 
+                extend: { 
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        serif: ['Playfair Display', 'serif'] 
+                    }, 
+                    colors: { 
+                        gold: '#D4AF37', 
+                        luxuryBlack: '#0A0A0A', 
+                        emerald: '#064E3B',
+                        primary: '#064E3B'
+                    } 
+                } 
+            } 
+        }
+    </script>
+
+    <style>
+        /* Modern Luxury Micro-interactions */
+        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20px); }
+        .dark .glass { background: rgba(10, 10, 10, 0.75); }
+        
+        body { font-family: 'Inter', sans-serif; background: #FAF9F6; transition: background-color 0.5s ease; scroll-behavior: smooth; }
+        .serif { font-family: 'Playfair Display', serif; }
+        
+        /* Reveal on Scroll Animation */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Luxury Input Styling */
+        .luxury-input { border-color: rgba(212, 175, 55, 0.2); transition: all 0.4s ease; }
+        .luxury-input:focus { border-color: #D4AF37; }
+
+        /* Hide Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-success { animation: fadeUp 0.8s forwards; }
+    </style>
+</head>
+
+<body class="dark:bg-luxuryBlack dark:text-white selection:bg-gold selection:text-white overflow-x-hidden">
+
+    <!-- NAVIGATION -->
+    <nav class="glass sticky top-0 z-[100] border-b dark:border-zinc-900 py-6 px-6 lg:px-12 flex justify-between items-center transition-all duration-300" id="main-nav">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald p-2 rounded-full text-white">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tighter uppercase serif">TSIG</h1>
+        </div>
+
+        <div class="hidden md:flex gap-10 text-[11px] uppercase tracking-[0.2em] font-bold text-zinc-500">
+            <a href="index.html" class="hover:text-gold transition">Home</a>
+            <a href="products.html" class="hover:text-gold transition">Products</a>
+            <a href="contact.html" class="text-zinc-900 dark:text-white border-b border-gold italic">Contact</a>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <button id="theme-toggle" class="hover:text-gold transition">
+                <i data-lucide="moon" id="theme-icon" class="w-5 h-5"></i>
+            </button>
+            <div class="relative cursor-pointer">
+                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                <span class="absolute -top-2 -right-2 bg-gold text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold">15</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-[1440px] mx-auto py-20 px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
+        
+        <!-- LEFT COLUMN: BRANDING & CONTACT INFO -->
+        <div class="reveal space-y-10">
+            <div class="space-y-4">
+                <span class="text-gold uppercase tracking-[0.4em] text-[10px] font-black">Private Atelier . Lagos . NYC</span>
+                <h2 class="text-6xl md:text-8xl serif italic leading-tight">Private <br> <span class="text-gold">Concierge</span></h2>
+            </div>
+            
+            <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed text-lg max-w-sm serif italic">
+                Connect with our specialized assistants for technical inquiries, bespoke sourcing, and exclusive orders.
+            </p>
+            
+            <div class="space-y-8 pt-12 border-t dark:border-zinc-900">
+                <!-- Email Link -->
+                <div class="flex items-center gap-8 group cursor-pointer" onclick="location.href='mailto:thesamuelifeanyigroup@gmail.com'">
+                    <div class="w-16 h-16 rounded-full border dark:border-zinc-800 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-white transition-all duration-500">
+                        <i data-lucide="mail" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Digital Correspondence</p>
+                        <p class="text-lg font-bold">thesamuelifeanyigroup@gmail.com</p>
+                    </div>
+                </div>
+                
+                <!-- Phone Link -->
+                <div class="flex items-center gap-8 group cursor-pointer" onclick="location.href='tel:+2349138332291'">
+                    <div class="w-16 h-16 rounded-full border dark:border-zinc-800 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-white transition-all duration-500">
+                        <i data-lucide="phone" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Priority Line</p>
+                        <p class="text-lg font-bold">(234) 9138 3322 91</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: FUNCTIONAL WEB3FORMS -->
+        <div class="reveal relative">
+            <div class="absolute -top-10 -right-10 w-64 h-64 bg-gold opacity-10 blur-[100px] rounded-full"></div>
+            
+            <div class="relative z-10 bg-white dark:bg-zinc-900 p-10 md:p-16 rounded-[3.5rem] shadow-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+                <form id="contact-form" class="space-y-10" onsubmit="handleInquiry(event)">
+                    
+                    <!-- WEB3FORMS CONFIG -->
+                    <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+                    <input type="hidden" name="subject" value="New Atelier Inquiry from TSIG">
+                    <input type="hidden" name="from_name" value="TSIG Concierge">
+                    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-2">
+                            <label class="text-[9px] font-black uppercase text-zinc-400 tracking-widest">First Name</label>
+                            <input type="text" name="first_name" required class="w-full bg-transparent border-b border-zinc-200 dark:border-zinc-800 py-2 text-sm outline-none luxury-input focus:border-gold transition-colors">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Last Name</label>
+                            <input type="text" name="last_name" required class="w-full bg-transparent border-b border-zinc-200 dark:border-zinc-800 py-2 text-sm outline-none luxury-input focus:border-gold transition-colors">
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Curated Email Address</label>
+                        <input type="email" name="email" required class="w-full bg-transparent border-b border-zinc-200 dark:border-zinc-800 py-2 text-sm outline-none luxury-input focus:border-gold transition-colors">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Message / Bespoke Requirement</label>
+                        <textarea name="message" rows="3" required class="w-full bg-transparent border-b border-zinc-200 dark:border-zinc-800 py-2 text-sm outline-none luxury-input focus:border-gold transition-colors" placeholder="Describe your request..."></textarea>
+                    </div>
+                    
+                    <button type="submit" id="contact-btn" class="w-full py-5 bg-luxuryBlack dark:bg-white dark:text-black text-white rounded-full font-bold text-[10px] uppercase tracking-[0.4em] hover:bg-gold hover:text-white transition-all duration-500 transform active:scale-95">
+                        Establish Connection
+                    </button>
+                </form>
+
+                <!-- SUCCESS OVERLAY (Hidden by default) -->
+                <div id="success-overlay" class="hidden absolute inset-0 bg-white dark:bg-zinc-900 z-20 flex flex-col items-center justify-center text-center p-12 animate-success">
+                    <div class="w-20 h-20 bg-emerald-50 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-6">
+                        <i data-lucide="check" class="text-emerald-500 w-10 h-10"></i>
+                    </div>
+                    <h3 class="serif italic text-4xl mb-4 text-zinc-900 dark:text-white">Request Sent</h3>
+                    <p class="text-zinc-500 text-sm max-w-[250px] leading-relaxed">A TSIG specialist will establish contact at your curated email shortly.</p>
+                    <button onclick="window.location.reload()" class="mt-8 text-gold text-[10px] font-black uppercase tracking-widest border-b border-gold pb-1">Send Another</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="reveal bg-luxuryBlack text-white py-24 px-12 mt-20 border-t border-zinc-900">
+        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div class="text-center md:text-left space-y-2">
+                <h1 class="text-2xl font-bold uppercase serif italic tracking-widest">TSIG Elite</h1>
+                <p class="text-[9px] text-zinc-600 tracking-[0.5em] uppercase">Private Sourcing . NYC . LDN . LOS</p>
+            </div>
+            
+            <div class="flex gap-8 items-center opacity-40 grayscale">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="h-4 invert" alt="PayPal">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-6" alt="Mastercard">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" class="h-6 invert" alt="Stripe">
+            </div>
+            
+            <a href="#" class="text-[10px] font-bold text-emerald-500 underline uppercase tracking-widest">Mobile Site</a>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // 1. Scroll Reveal Logic
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // 2. Web3Forms Functional Logic
+        async function handleInquiry(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('contact-btn');
+            const overlay = document.getElementById('success-overlay');
+            const originalText = btn.innerHTML;
+
+            // Luxury Loading State
+            btn.innerHTML = `<span class="flex items-center justify-center gap-3 italic">Establishing Secure Atelier Connection <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i></span>`;
+            btn.disabled = true;
+            lucide.createIcons();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    overlay.classList.remove('hidden');
+                    overlay.classList.add('flex');
+                    form.reset();
+                } else {
+                    alert("Atelier Connection Error. Please try the Priority Line.");
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                alert("Network Error. Check your connection.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // 3. Theme Toggle Logic (Persisted across pages)
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        function updateIcon(isDark) {
+            themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('luxury-theme', isDark ? 'dark' : 'light');
+            updateIcon(isDark);
+        });
+
+        // Initialize saved theme
+        if (localStorage.getItem('luxury-theme') === 'dark') {
+            html.classList.add('dark');
+            updateIcon(true);
+        } else {
+            updateIcon(false);
+        }
+
+        // 4. Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-4', 'shadow-xl');
+                nav.classList.remove('py-6');
+            } else {
+                nav.classList.add('py-6');
+                nav.classList.remove('py-4', 'shadow-xl');
+            }
+        });
+    </script>
+</body>
+</html>

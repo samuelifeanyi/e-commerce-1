@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSIG | Luxury Tech Mart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        primary: '#064E3B', 
+                        gold: '#D4AF37',
+                        luxuryBlack: '#0A0A0A',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20px); }
+        .dark .glass { background: rgba(10, 10, 10, 0.75); }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.5s ease; scroll-behavior: smooth; }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .mega-menu { opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; }
+        .group:hover .mega-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #FAF9F6; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+        .img-zoom { transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .group:hover .img-zoom { transform: scale(1.08); }
+        
+        /* Auth Modal Transitions */
+        #auth-modal { transition: opacity 0.4s ease, visibility 0.4s ease; }
+        #auth-modal.hidden { opacity: 0; visibility: hidden; display: flex !important; }
+    </style>
+</head>
+<body class="bg-[#FAF9F6] dark:bg-luxuryBlack text-zinc-900 dark:text-zinc-100 selection:bg-gold selection:text-white">
+
+    <!-- AUTH MODAL (NEW FUNCTIONAL SECTION) -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleAuthModal()"></div>
+        <div class="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl overflow-hidden border dark:border-zinc-800">
+            <button onclick="toggleAuthModal()" class="absolute top-6 right-6 text-zinc-400 hover:text-gold transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <div class="p-10">
+                <div class="flex gap-8 mb-10 border-b dark:border-zinc-800">
+                    <button id="tab-login" onclick="switchAuth('login')" class="pb-4 text-sm font-bold uppercase tracking-widest border-b-2 border-gold text-zinc-900 dark:text-white">Sign In</button>
+                    <button id="tab-register" onclick="switchAuth('register')" class="pb-4 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-gold transition">Register</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="form-login" class="space-y-6" onsubmit="handleAuth(event)">
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Email Address</label>
+                        <input type="email" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Password</label>
+                            <a href="#" class="text-[9px] text-gold uppercase font-bold">Forgot?</a>
+                        </div>
+                        <input type="password" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-zinc-900 dark:bg-white dark:text-black text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-gold transition-all">Enter Atelier</button>
+                </form>
+
+                <!-- Register Form (Hidden by default) -->
+                <form id="form-register" class="space-y-6 hidden" onsubmit="handleAuth(event)">
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Full Name</label>
+                        <input type="text" class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Email Address</label>
+                        <input type="email" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Create Password</label>
+                        <input type="password" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-gold text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-zinc-900 transition-all">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER SYSTEM -->
+    <header class="w-full relative z-[100]">
+        <div class="bg-white dark:bg-zinc-950 border-b dark:border-zinc-800 py-3 px-6 lg:px-12 text-[11px] uppercase tracking-widest text-zinc-500">
+            <div class="max-w-[1440px] mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-6">
+                    <span class="font-semibold text-zinc-400">Hotline 24/7</span>
+                    <span class="font-bold text-zinc-900 dark:text-white tracking-tighter text-sm">(025) 3886 25 16</span>
+                </div>
+                <div class="flex items-center gap-8">
+                    <div class="hidden md:flex gap-8">
+                        <a href="#" class="hover:text-gold transition">Sell on Tsig</a>
+                        <a href="#" class="hover:text-gold transition">Order Tracking</a>
+                    </div>
+                    <div class="flex items-center gap-4 border-l dark:border-zinc-800 pl-4">
+                        <button id="theme-toggle" class="p-1 hover:text-gold transition"><i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i></button>
+                        <span class="cursor-pointer hover:text-gold transition">USD</span>
+                        <div class="flex items-center gap-2 cursor-pointer hover:text-gold transition">
+                            <img src="https://flagcdn.com/w20/us.png" class="w-4 grayscale" alt="US">
+                            <span>Eng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav id="main-nav" class="glass sticky top-0 border-b dark:border-zinc-900 py-6 px-6 lg:px-12 transition-all duration-300">
+            <div class="max-w-[1440px] mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary dark:bg-emerald-900 p-2 rounded-full text-white">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tighter leading-none uppercase">TSIG</h1>
+                        <p class="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase font-sans">Atelier Mart</p>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex items-center gap-10 font-medium text-[12px] uppercase tracking-[0.2em] text-zinc-500">
+                    <a href="#" class="text-zinc-900 dark:text-white border-b border-gold italic">Homes</a>
+                    
+                    <div class="group relative py-4">
+                        <button class="flex items-center gap-1 hover:text-gold transition">Pages <i data-lucide="chevron-down" class="w-3 h-3"></i></button>
+                        <div class="mega-menu absolute top-full left-1/2 -translate-x-1/2 w-[600px] bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl p-8 grid grid-cols-2 gap-8 border dark:border-zinc-800">
+                            <div>
+                                <h4 class="text-gold font-serif italic text-lg mb-4">The Atelier</h4>
+                                <ul class="space-y-3 lowercase tracking-normal text-sm text-zinc-500">
+                                    <li><a href="#editorial" class="hover:text-gold transition flex items-center gap-2">● About our Story</a></li>
+                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● TSIG Journal</a></li>
+                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Bespoke Services</a></li>
+                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Atelier Careers</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="text-gold font-serif italic text-lg mb-4">Client Care</h4>
+                                <ul class="space-y-3 lowercase tracking-normal text-sm text-zinc-500">
+                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Luxury Warranty</a></li>
+                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Shipping Policy</a></li>
+                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Private Concierge</a></li>
+                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Store Locator</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="./products.html" target="_blank" class="hover:text-gold transition">Products</a>
+                    <a href="./contact.html" target="_blank" class="hover:text-gold transition">Contact</a>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="hidden sm:flex items-center gap-6 text-zinc-400">
+                        <button class="hover:text-gold transition"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                        <button class="hover:text-gold transition"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                    </div>
+                    <div class="flex items-center gap-4 border-l dark:border-zinc-800 pl-6">
+                        <!-- FUNCTIONAL LOGIN BUTTON -->
+                        <div class="text-right hidden md:block cursor-pointer group" onclick="toggleAuthModal()">
+                            <p class="text-[9px] text-zinc-400 uppercase font-bold tracking-widest group-hover:text-gold transition">Welcome</p>
+                            <p class="text-[11px] font-bold dark:text-white uppercase">Log In / Register</p>
+                        </div>
+                        <div class="relative group cursor-pointer" onclick="animateCart()">
+                            <i data-lucide="shopping-bag" id="cart-icon" class="w-6 h-6 text-zinc-800 dark:text-zinc-200 transition-transform"></i>
+                            <span id="cart-count" class="absolute -top-2 -right-2 bg-gold text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="bg-white dark:bg-zinc-950 py-4 px-6 lg:px-12 border-b dark:border-zinc-900">
+            <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center w-full md:max-w-2xl overflow-hidden border border-transparent focus-within:border-gold transition-all">
+                    <button class="px-6 py-3 text-[11px] font-bold uppercase tracking-widest border-r dark:border-zinc-800 text-zinc-500 whitespace-nowrap">All Categories</button>
+                    <input type="text" placeholder="Search curated technology..." class="flex-grow px-6 bg-transparent outline-none text-sm italic">
+                    <button class="px-6 text-zinc-400 hover:text-gold transition"><i data-lucide="search" class="w-5 h-5"></i></button>
+                </div>
+                <div class="flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+                    <div>FREE SHIPPING OVER $199</div>
+                    <div>30 DAYS MONEY BACK</div>
+                    <div>100% SECURE PAYMENT</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO BENTO SYSTEM -->
+    <main class="max-w-[1440px] mx-auto py-12 px-6 lg:px-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="reveal lg:row-span-2 bg-white dark:bg-zinc-900 rounded-[2rem] p-8 shadow-sm border border-zinc-50 dark:border-zinc-800 hidden lg:block">
+                <h3 class="text-gold serif italic text-xl mb-8">Seasonal Selection</h3>
+                <ul class="space-y-6 text-sm font-medium text-zinc-500">
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Laptops <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">PC & Computers <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Cell Phones <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Tablets <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Gaming & VR <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Networking <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Cameras <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Sounds <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Office <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
+                    <li class="text-rose-600 font-bold tracking-widest pt-4">CLEARANCE</li>
+                </ul>
+            </div>
+            <div class="reveal md:col-span-2 relative bg-zinc-200 dark:bg-zinc-800 rounded-[2.5rem] p-12 overflow-hidden flex flex-col justify-center min-h-[450px] group shadow-2xl">
+                <div class="relative z-10 max-w-sm space-y-6">
+                    <h2 class="text-5xl md:text-7xl leading-none text-zinc-800 dark:text-white serif italic">The Art of <br> Silence</h2>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">Experience Boso Over-Ear mastery. <br>Low Latency. High Fidelity. Pure Luxury.</p>
+                    <button onclick="animateCart()" class="bg-zinc-900 dark:bg-white dark:text-black text-white px-10 py-4 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold transition-all active:scale-95">Acquire Now</button>
+                </div>
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000" class="absolute right-[-10%] bottom-0 w-2/3 object-contain mix-blend-multiply dark:mix-blend-screen transition-transform duration-1000 group-hover:scale-110 opacity-90" alt="Headphones">
+            </div>
+            <div class="reveal bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border dark:border-zinc-800 flex flex-col justify-between group overflow-hidden shadow-sm product-card">
+                <div class="z-10"><p class="text-[10px] uppercase font-black text-gold tracking-widest mb-2">Xomia Elite</p><h2 class="text-2xl leading-tight serif italic">Vanguard Sport</h2><button class="mt-4 text-[10px] font-bold border-b border-gold pb-1 uppercase tracking-widest group-hover:text-gold transition">Shop Series</button></div>
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600" class="w-40 self-end grayscale group-hover:grayscale-0 transition-all duration-700 img-zoom" alt="Watch">
+            </div>
+            <div class="reveal bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 flex items-center justify-between border dark:border-zinc-800 group shadow-sm product-card">
+                <div><h3 class="serif italic text-xl">Sono Playgo 5</h3><p class="text-emerald-600 font-bold text-sm mt-1">$569.00</p><a href="#" class="text-[9px] font-bold uppercase tracking-widest mt-4 block text-zinc-400 hover:text-gold transition">Discover Now</a></div>
+                <img src="https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?q=80&w=400" class="w-24 group-hover:scale-110 transition duration-500" alt="Console">
+            </div>
+            <div class="reveal bg-zinc-900 rounded-[2.5rem] p-8 flex flex-col justify-between text-white relative overflow-hidden group">
+                <div class="z-10"><h2 class="text-3xl serif italic leading-none">Hero 11+ <br> <span class="text-gold">Obsidian</span></h2><p class="text-xs mt-4 text-zinc-400 font-bold">$169.00</p></div>
+                <img src="https://images.unsplash.com/photo-1565967511849-76a60a516170?q=80&w=400" class="absolute right-[-20px] bottom-[-20px] w-32 rotate-12 group-hover:rotate-0 transition-all duration-700">
+            </div>
+        </div>
+    </main>
+
+    <!-- BRANDS EDITORIAL -->
+    <section class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-12 bg-white dark:bg-zinc-900 rounded-[3rem] my-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div>
+                <div class="flex justify-between items-center mb-12 border-b dark:border-zinc-800 pb-6"><h2 class="text-2xl font-bold uppercase tracking-tighter">Featured Brands</h2><a href="#" class="text-[10px] font-bold uppercase text-zinc-400 hover:text-gold transition">View All</a></div>
+                <div class="grid grid-cols-3 md:grid-cols-5 gap-12 items-center opacity-40 hover:opacity-100 transition-all">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/JetBrains_Logo_2016.svg/1200px-JetBrains_Logo_2016.svg.png" class="h-6 object-contain grayscale hover:grayscale-0 transition" alt="Jet">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Msi-logo.svg/1200px-Msi-logo.svg.png" class="h-4 object-contain grayscale" alt="Msi">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Snyk_logo.svg/2560px-Snyk_logo.svg.png" class="h-5 object-contain grayscale" alt="Snyk">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" class="h-6 object-contain grayscale" alt="Stripe">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1667px-Apple_logo_black.svg.png" class="h-6 object-contain grayscale dark:invert" alt="Apple">
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-12 border-b dark:border-zinc-800 pb-6"><h2 class="text-2xl font-bold uppercase tracking-tighter">Top Categories</h2><div class="flex gap-2"><button class="w-8 h-8 rounded-full border dark:border-zinc-800 flex items-center justify-center hover:bg-gold transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button class="w-8 h-8 rounded-full border dark:border-zinc-800 flex items-center justify-center hover:bg-gold transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div></div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="laptop" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Laptops</span></div>
+                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="gamepad-2" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">PC Gaming</span></div>
+                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="headphones" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Headphones</span></div>
+                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="monitor" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Monitors</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEALS OF THE DAY -->
+    <section class="reveal max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
+        <div class="bg-white dark:bg-zinc-900 rounded-[3rem] shadow-2xl overflow-hidden border dark:border-zinc-800">
+            <div class="bg-emerald-600 px-10 py-6 text-white flex justify-between items-center"><h2 class="text-xl font-bold uppercase tracking-widest serif italic">Limited Time Deals</h2><span class="text-[10px] tracking-[0.4em] font-light opacity-60 uppercase">Ending Soon</span></div>
+            <div class="p-12 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="relative flex items-center justify-center group"><div class="absolute top-0 left-0 bg-gold text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg z-10">SAVE $199.00</div><img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&q=80&w=800" class="w-full h-[400px] object-contain transition duration-1000 group-hover:scale-105" alt="Phone"></div>
+                <div class="space-y-8"><h1 class="text-4xl serif italic">Xioma Redmi Note 11 Pro Elite</h1><div class="flex items-center gap-6"><span class="text-4xl font-black text-rose-600">$569.00</span><span class="text-xl text-zinc-400 line-through font-light italic">$759.00</span></div>
+                    <div class="pt-8 border-t dark:border-zinc-800"><p class="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-zinc-400 italic">EXPIRES IN:</p><div class="flex gap-6" id="timer"><div class="text-center"><p class="text-4xl font-serif" id="days">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Days</p></div><div class="text-center"><p class="text-4xl font-serif text-gold" id="hours">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Hours</p></div><div class="text-center"><p class="text-4xl font-serif" id="minutes">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Mins</p></div><div class="text-center"><p class="text-4xl font-serif" id="seconds">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Secs</p></div></div></div>
+                    <div class="space-y-3"><div class="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden"><div class="bg-emerald-600 h-full w-[35%]"></div></div><p class="text-[11px] font-bold text-zinc-400 uppercase tracking-widest text-center md:text-left">Sold: <span class="text-zinc-900 dark:text-white">26/75 Pieces</span></p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGES UNIVERSE -->
+    <section id="editorial" class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="group relative aspect-[4/5] rounded-[2rem] overflow-hidden cursor-pointer shadow-xl">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Atelier">
+            <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/80 to-transparent flex flex-col justify-end p-10">
+                <h4 class="text-gold uppercase text-[10px] font-black tracking-[0.3em] mb-2">Our Atelier</h4>
+                <h2 class="text-white text-3xl font-serif italic mb-4">Crafting the <br> Future</h2>
+                <a href="#" class="text-white font-bold text-[10px] uppercase border-b border-gold self-start pb-1">About Us</a>
+            </div>
+        </div>
+        <div class="group relative aspect-[4/5] rounded-[2rem] overflow-hidden cursor-pointer shadow-xl">
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Journal">
+            <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/80 to-transparent flex flex-col justify-end p-10">
+                <h4 class="text-gold uppercase text-[10px] font-black tracking-[0.3em] mb-2">The Journal</h4>
+                <h2 class="text-white text-3xl font-serif italic mb-4">Editorial <br> Curations</h2>
+                <a href="#" class="text-white font-bold text-[10px] uppercase border-b border-gold self-start pb-1">Read Journal</a>
+            </div>
+        </div>
+        <div class="group relative aspect-[4/5] rounded-[2rem] overflow-hidden cursor-pointer shadow-xl">
+            <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Concierge">
+            <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/80 to-transparent flex flex-col justify-end p-10">
+                <h4 class="text-gold uppercase text-[10px] font-black tracking-[0.3em] mb-2">Service</h4>
+                <h2 class="text-white text-3xl font-serif italic mb-4">Private <br> Concierge</h2>
+                <a href="#" class="text-white font-bold text-[10px] uppercase border-b border-gold self-start pb-1">Inquire</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEO CONTENT -->
+    <section class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-32 bg-[#F2F2F2] dark:bg-zinc-900/80 my-12 rounded-[3rem]">
+        <h2 class="text-3xl serif italic mb-10 leading-tight">TSIG – <span class="text-gold">#1</span> Online Marketplace for <br> curated technology.</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-zinc-500 font-medium">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae posuere mi. Quisque iaculis dignissim scelerisque. Morbi condimentum sagittis leo vitae tempor. Suspendisse in dolor odio. Sed aliquet ac lacus ut luctus. Fusce mattis sollicitudin sem, id lobortis nibh ullamcorper a. Donec vehicula dolor et arcu consequat mattis. Fusce mattis nec nulla in scelerisque.</p>
+            <p>Morbi pharetra sem mauris, nec aliquet ipsum vestibulum suscipit. Curabitur non euismod dui. Proin eget justo eu erat luctus placerat. Nam rhoncus ipsum ac enim faucibus, at consequat ante maximus. Vestibulum at nibh ac odio ultrices varius. Duis vitae libero mollis, lobortis ligula id, varius erat. Sed id odio dictum, laoreet enim ac, commodo magna. Praesent sodales porttitor maximus. Sed a lacus felis. Maecenas consectetur consequat orci scelerisque malesuada. Fusce vel orci eu tortor consequat mattis quis at ante. Class aptent taciti sociosqu ad litora torquent per conubi,</p>
+        </div>
+        <div class="mt-12"><a href="#" class="text-xs font-bold uppercase tracking-widest border-b border-gold pb-1 hover:text-gold transition">Discover our Story</a></div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="reveal bg-zinc-950 text-white pt-24 pb-12 px-6 lg:px-12 mt-24">
+        <div class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 border-b border-zinc-800 pb-20">
+            <div class="lg:col-span-4 space-y-10">
+                <h2 class="text-2xl font-bold uppercase tracking-tighter">TSIG Elite</h2>
+                <div class="space-y-2"><p class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.3em]">Hotline 24/7</p><p class="text-4xl font-black text-emerald-500 leading-none">(025) 3686 25 16</p></div>
+                <div class="text-zinc-500 text-sm italic max-w-xs space-y-1 font-medium leading-relaxed"><p>257 Thatcher Road St, Brooklyn, Manhattan,</p><p>NY 10092</p><p class="hover:text-emerald-500 transition cursor-pointer">contact@Tsigtechmart.com</p></div>
+                <div class="flex gap-6 pt-4"><i data-lucide="twitter" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i><i data-lucide="facebook" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i><i data-lucide="instagram" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i><i data-lucide="youtube" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i></div>
+            </div>
+            <div class="lg:col-span-2 space-y-8"><h4 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-600">Explore</h4><ul class="space-y-4 text-sm text-zinc-400 font-medium"><li><a href="#" class="hover:text-emerald-500 transition">Laptops</a></li><li><a href="#" class="hover:text-emerald-500 transition">PC Gaming</a></li><li><a href="#" class="hover:text-emerald-500 transition">Atelier Audio</a></li><li><a href="#" class="hover:text-emerald-500 transition">Cell Phones</a></li><li><a href="#" class="hover:text-emerald-500 transition">Gaming & VR</a></li></ul></div>
+            <div class="lg:col-span-6 space-y-10">
+                <h4 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-600">Join the TSIG Atelier</h4>
+                <p class="text-xl md:text-2xl serif italic text-zinc-300">Subscribe & get <span class="text-rose-500">10% OFF</span> for your first order.</p>
+                <form onsubmit="handleAuth(event)" class="relative border-b border-zinc-800 pb-4 max-w-lg"><input type="email" placeholder="Enter email address" class="bg-transparent w-full outline-none italic text-lg py-2"><button class="absolute right-0 top-1/2 -translate-y-1/2 text-gold text-xs font-bold uppercase tracking-[0.2em] hover:text-white transition">Subscribe</button></form>
+            </div>
+        </div>
+        <div class="max-w-[1440px] mx-auto pt-12 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">
+            <p class="text-[10px] font-bold tracking-[0.3em]">© 2025 TSIG ATELIER MART NYC . ALL RIGHTS RESERVED</p>
+            <div class="flex items-center gap-8"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="h-4 invert" alt="Paypal"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-6 grayscale" alt="Mastercard"><img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" class="h-6 invert" alt="Stripe"><a href="#" class="text-[10px] font-bold tracking-widest text-emerald-500 underline uppercase">Mobile Site</a></div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. Auth Modal Functionality
+        const authModal = document.getElementById('auth-modal');
+        function toggleAuthModal() {
+            authModal.classList.toggle('hidden');
+            if(!authModal.classList.contains('hidden')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function switchAuth(view) {
+            const loginForm = document.getElementById('form-login');
+            const registerForm = document.getElementById('form-register');
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+
+            if(view === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                tabLogin.classList.add('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
+                tabLogin.classList.remove('text-zinc-400');
+                tabRegister.classList.remove('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
+                tabRegister.classList.add('text-zinc-400');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                tabRegister.classList.add('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
+                tabRegister.classList.remove('text-zinc-400');
+                tabLogin.classList.remove('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
+                tabLogin.classList.add('text-zinc-400');
+            }
+            lucide.createIcons();
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerText = "Welcome Back";
+                btn.classList.add('bg-emerald-600');
+                setTimeout(() => {
+                    toggleAuthModal();
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('bg-emerald-600');
+                }, 1000);
+            }, 1500);
+        }
+
+        // 2. Dynamic Countdown Timer (162 Days)
+        function startTimer() {
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 162);
+            
+            function tick() {
+                const now = new Date().getTime();
+                const diff = targetDate - now;
+                document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                document.getElementById('minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            }
+            setInterval(tick, 1000);
+            tick();
+        }
+        startTimer();
+
+        // 3. Scroll Reveal Animation
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // 4. Cart Simulation
+        let bagCount = 5;
+        function animateCart() {
+            bagCount++;
+            document.getElementById('cart-count').innerText = bagCount;
+            const icon = document.getElementById('cart-icon');
+            icon.classList.add('scale-125', 'text-gold');
+            setTimeout(() => icon.classList.remove('scale-125', 'text-gold'), 300);
+        }
+
+        // 5. Theme Toggler
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
+            localStorage.setItem('luxury-theme', isDark ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('luxury-theme') === 'dark') { 
+            document.documentElement.classList.add('dark'); 
+            themeIcon.setAttribute('data-lucide', 'sun'); 
+            lucide.createIcons(); 
+        }
+    </script>
+</body>
+</html>
