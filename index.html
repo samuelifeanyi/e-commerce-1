@@ -3,24 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TSIG | Luxury Tech Mart</title>
+    <title>TSIG | Luxury Tech Atelier</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    },
-                    colors: {
-                        primary: '#064E3B', 
-                        gold: '#D4AF37',
-                        luxuryBlack: '#0A0A0A',
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
+                    colors: { primary: '#064E3B', gold: '#D4AF37', luxuryBlack: '#0A0A0A' }
                 }
             }
         }
@@ -28,211 +23,219 @@
     <style>
         .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20px); }
         .dark .glass { background: rgba(10, 10, 10, 0.75); }
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.5s ease; scroll-behavior: smooth; }
-        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.5s ease; scroll-behavior: smooth; overflow-x: hidden; }
+        h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        .mega-menu { opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; }
-        .group:hover .mega-menu { opacity: 1; visibility: visible; transform: translateY(0); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #FAF9F6; }
-        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
-        .img-zoom { transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        .group:hover .img-zoom { transform: scale(1.08); }
         
-        /* Auth Modal Transitions */
-        #auth-modal { transition: opacity 0.4s ease, visibility 0.4s ease; }
-        #auth-modal.hidden { opacity: 0; visibility: hidden; display: flex !important; }
+        #mobile-menu { transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); transform: translateX(100%); }
+        #mobile-menu.open { transform: translateX(0); }
+
+        /* Mega Menu System */
+        .mega-menu { opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.4s ease; pointer-events: none; z-index: 100; }
+        .group:hover .mega-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+
+        #search-results.hidden { display: none; }
+        #live-notif { transition: all 0.5s ease; transform: translateY(150%); }
+        #live-notif.show { transform: translateY(0); }
+        .img-zoom { transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .group:hover .img-zoom { transform: scale(1.05); }
+
+        /* Universe Filter Styles */
+        .universe-card { transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .universe-card.filtered-out { opacity: 0.05; transform: scale(0.9); pointer-events: none; filter: blur(4px); }
+        .orbit-btn.active { border-color: #D4AF37; color: #D4AF37; font-style: italic; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-[#FAF9F6] dark:bg-luxuryBlack text-zinc-900 dark:text-zinc-100 selection:bg-gold selection:text-white">
 
-    <!-- AUTH MODAL (NEW FUNCTIONAL SECTION) -->
-    <div id="auth-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleAuthModal()"></div>
-        <div class="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl overflow-hidden border dark:border-zinc-800">
-            <button onclick="toggleAuthModal()" class="absolute top-6 right-6 text-zinc-400 hover:text-gold transition">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
-            
-            <div class="p-10">
-                <div class="flex gap-8 mb-10 border-b dark:border-zinc-800">
-                    <button id="tab-login" onclick="switchAuth('login')" class="pb-4 text-sm font-bold uppercase tracking-widest border-b-2 border-gold text-zinc-900 dark:text-white">Sign In</button>
-                    <button id="tab-register" onclick="switchAuth('register')" class="pb-4 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-gold transition">Register</button>
-                </div>
-
-                <!-- Login Form -->
-                <form id="form-login" class="space-y-6" onsubmit="handleAuth(event)">
-                    <div class="space-y-1">
-                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Email Address</label>
-                        <input type="email" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
-                    </div>
-                    <div class="space-y-1">
-                        <div class="flex justify-between items-center">
-                            <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Password</label>
-                            <a href="#" class="text-[9px] text-gold uppercase font-bold">Forgot?</a>
-                        </div>
-                        <input type="password" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
-                    </div>
-                    <button type="submit" class="w-full py-4 bg-zinc-900 dark:bg-white dark:text-black text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-gold transition-all">Enter Atelier</button>
-                </form>
-
-                <!-- Register Form (Hidden by default) -->
-                <form id="form-register" class="space-y-6 hidden" onsubmit="handleAuth(event)">
-                    <div class="space-y-1">
-                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Full Name</label>
-                        <input type="text" class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Email Address</label>
-                        <input type="email" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] uppercase font-black tracking-widest text-zinc-400">Create Password</label>
-                        <input type="password" required class="w-full bg-zinc-50 dark:bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gold outline-none transition">
-                    </div>
-                    <button type="submit" class="w-full py-4 bg-gold text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-zinc-900 transition-all">Create Account</button>
-                </form>
-            </div>
+    <!-- LIVE NOTIFICATION -->
+    <div id="live-notif" class="fixed bottom-8 left-8 z-[500] glass dark:bg-zinc-900 border dark:border-zinc-800 p-4 rounded-2xl flex items-center gap-4 shadow-2xl max-w-xs">
+        <div class="w-12 h-12 bg-zinc-100 rounded-lg overflow-hidden shrink-0">
+            <img id="notif-img" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=200" class="w-full h-full object-cover">
         </div>
+        <div>
+            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-tight">Recent Acquisition</p>
+            <p class="text-xs font-semibold" id="notif-text">Vanguard Watch purchased in NYC</p>
+        </div>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-[600] flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleAuthModal()"></div>
+        <div class="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl p-10 border dark:border-zinc-800">
+            <div class="flex gap-8 mb-10 border-b dark:border-zinc-800 pb-4">
+                <button id="tab-login" onclick="switchAuth('login')" class="text-xs font-bold uppercase tracking-widest border-b-2 border-gold">Sign In</button>
+                <button id="tab-register" onclick="switchAuth('register')" class="text-xs font-bold uppercase tracking-widest text-zinc-400">Register</button>
+            </div>
+            <form class="space-y-6" onsubmit="handleAuth(event)">
+                <input type="email" required placeholder="Email Address" class="w-full bg-zinc-50 dark:bg-zinc-800 rounded-xl px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-gold transition">
+                <input type="password" required placeholder="Password" class="w-full bg-zinc-50 dark:bg-zinc-800 rounded-xl px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-gold transition">
+                <button type="submit" id="auth-btn" class="w-full py-4 bg-zinc-900 dark:bg-white dark:text-black text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-gold transition-all">Establish Connection</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div id="mobile-menu" class="fixed inset-0 z-[550] bg-white dark:bg-luxuryBlack p-8 flex flex-col">
+        <div class="flex justify-between items-center mb-12">
+            <h1 class="text-2xl font-bold uppercase serif italic tracking-tighter">TSIG</h1>
+            <button onclick="toggleMobileMenu()"><i data-lucide="x" class="w-8 h-8"></i></button>
+        </div>
+        <nav class="flex flex-col gap-8 text-4xl serif italic">
+            <a href="index.html" onclick="toggleMobileMenu()">Homes</a>
+            <a href="products.html" target="_blank">The Collection</a>
+            <a href="contact.html" target="_blank">Concierge</a>
+            <a href="#universe" onclick="toggleMobileMenu()">Universe</a>
+        </nav>
     </div>
 
     <!-- HEADER SYSTEM -->
     <header class="w-full relative z-[100]">
-        <div class="bg-white dark:bg-zinc-950 border-b dark:border-zinc-800 py-3 px-6 lg:px-12 text-[11px] uppercase tracking-widest text-zinc-500">
+        <div class="bg-white dark:bg-zinc-950 border-b dark:border-zinc-800 py-3 px-6 lg:px-12 text-[10px] uppercase tracking-[0.2em] text-zinc-500 relative z-30">
             <div class="max-w-[1440px] mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-6">
-                    <span class="font-semibold text-zinc-400">Hotline 24/7</span>
-                    <span class="font-bold text-zinc-900 dark:text-white tracking-tighter text-sm">(234) 9138 3322 91</span>
+                <div class="flex items-center gap-6 font-bold">
+                    <span>Hotline 24/7</span>
+                    <span class="text-zinc-900 dark:text-white text-sm tracking-tighter cursor-copy" onclick="copyToClipboard('(234) 9138 3322 91')">(234) 9138 3322 91</span>
                 </div>
                 <div class="flex items-center gap-8">
-                    <div class="hidden md:flex gap-8">
+                    <div class="hidden md:flex gap-8 italic font-serif lowercase tracking-widest font-medium">
                         <a href="#" class="hover:text-gold transition">Sell on Tsig</a>
                         <a href="#" class="hover:text-gold transition">Order Tracking</a>
                     </div>
                     <div class="flex items-center gap-4 border-l dark:border-zinc-800 pl-4">
                         <button id="theme-toggle" class="p-1 hover:text-gold transition"><i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i></button>
-                        <span class="cursor-pointer hover:text-gold transition">USD</span>
-                        <div class="flex items-center gap-2 cursor-pointer hover:text-gold transition">
-                            <img src="https://flagcdn.com/w20/us.png" class="w-4 grayscale" alt="US">
-                            <span>Eng</span>
-                        </div>
+                        <span>Eng</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <nav id="main-nav" class="glass sticky top-0 border-b dark:border-zinc-900 py-6 px-6 lg:px-12 transition-all duration-300">
+        <nav id="main-nav" class="glass sticky top-0 border-b dark:border-zinc-900 py-6 px-6 lg:px-12 transition-all duration-300 z-20">
             <div class="max-w-[1440px] mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-primary dark:bg-emerald-900 p-2 rounded-full text-white">
-                        <i data-lucide="shield-check" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold tracking-tighter leading-none uppercase">TSIG</h1>
-                        <p class="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase font-sans">Atelier Mart</p>
+                <div class="flex items-center gap-6">
+                    <button onclick="toggleMobileMenu()" class="lg:hidden"><i data-lucide="menu" class="w-6 h-6"></i></button>
+                    <div class="flex items-center gap-3">
+                        <div class="bg-primary p-2 rounded-full text-white shadow-lg"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+                        <h1 class="text-2xl font-bold tracking-tighter uppercase leading-none italic font-serif">TSIG</h1>
                     </div>
                 </div>
 
-                <div class="hidden lg:flex items-center gap-10 font-medium text-[12px] uppercase tracking-[0.2em] text-zinc-500">
-                    <a href="#" class="text-zinc-900 dark:text-white border-b border-gold italic">Homes</a>
+                <div class="hidden lg:flex items-center gap-12 font-medium text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+                    <a href="index.html" class="text-zinc-900 dark:text-white border-b border-gold italic">Homes</a>
                     
                     <div class="group relative py-4">
-                        <button class="flex items-center gap-1 hover:text-gold transition">Pages <i data-lucide="chevron-down" class="w-3 h-3"></i></button>
-                        <div class="mega-menu absolute top-full left-1/2 -translate-x-1/2 w-[600px] bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl p-8 grid grid-cols-2 gap-8 border dark:border-zinc-800">
-                            <div>
-                                <h4 class="text-gold font-serif italic text-lg mb-4">The Atelier</h4>
-                                <ul class="space-y-3 lowercase tracking-normal text-sm text-zinc-500">
-                                    <li><a href="#editorial" class="hover:text-gold transition flex items-center gap-2">● About our Story</a></li>
-                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● TSIG Journal</a></li>
-                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Bespoke Services</a></li>
-                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Atelier Careers</a></li>
+                        <button class="flex items-center gap-1 hover:text-gold transition font-bold uppercase">Universe <i data-lucide="chevron-down" class="w-3 h-3"></i></button>
+                        <div class="mega-menu absolute top-full left-1/2 -translate-x-1/2 w-[900px] bg-white dark:bg-zinc-900 shadow-2xl rounded-[2.5rem] p-12 grid grid-cols-4 gap-10 border dark:border-zinc-800">
+                            <div class="space-y-6">
+                                <h4 class="text-gold font-serif italic text-lg border-b dark:border-zinc-800 pb-2">Atelier</h4>
+                                <ul class="space-y-4 text-[10px] font-black uppercase tracking-widest">
+                                    <li><a href="#universe" onclick="filterUniverse('heritage')" class="hover:text-gold block">Our Story</a></li>
+                                    <li><a href="#universe" onclick="filterUniverse('heritage')" class="hover:text-gold block">Ethics</a></li>
                                 </ul>
                             </div>
-                            <div>
-                                <h4 class="text-gold font-serif italic text-lg mb-4">Client Care</h4>
-                                <ul class="space-y-3 lowercase tracking-normal text-sm text-zinc-500">
-                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Luxury Warranty</a></li>
-                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Shipping Policy</a></li>
-                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Private Concierge</a></li>
-                                    <li><a href="#" class="hover:text-gold transition flex items-center gap-2">● Store Locator</a></li>
+                            <div class="space-y-6">
+                                <h4 class="text-gold font-serif italic text-lg border-b dark:border-zinc-800 pb-2">The Lab</h4>
+                                <ul class="space-y-4 text-[10px] font-black uppercase tracking-widest">
+                                    <li><a href="#universe" onclick="filterUniverse('innovation')" class="hover:text-gold block">Research</a></li>
+                                    <li><a href="#universe" onclick="filterUniverse('innovation')" class="hover:text-gold block">Prototypes</a></li>
+                                </ul>
+                            </div>
+                            <div class="space-y-6">
+                                <h4 class="text-gold font-serif italic text-lg border-b dark:border-zinc-800 pb-2">Services</h4>
+                                <ul class="space-y-4 text-[10px] font-black uppercase tracking-widest">
+                                    <li><a href="contact.html" class="hover:text-gold block">Concierge</a></li>
+                                    <li><a href="#universe" onclick="filterUniverse('services')" class="hover:text-gold block">Repair</a></li>
+                                </ul>
+                            </div>
+                            <div class="space-y-6">
+                                <h4 class="text-gold font-serif italic text-lg border-b dark:border-zinc-800 pb-2">Exclusive</h4>
+                                <ul class="space-y-4 text-[10px] font-black uppercase tracking-widest">
+                                    <li><a href="#universe" onclick="filterUniverse('exclusive')" class="hover:text-gold block">Elite Circle</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    <a href="./products.html" target="_blank" class="hover:text-gold transition">Products</a>
-                    <a href="./contact.html" target="_blank" class="hover:text-gold transition">Contact</a>
+                    <a href="products.html" target="_blank" class="hover:text-gold transition font-bold uppercase">Products</a>
+                    <a href="contact.html" target="_blank" class="hover:text-gold transition font-bold uppercase">Contact</a>
                 </div>
 
                 <div class="flex items-center gap-6">
-                    <div class="hidden sm:flex items-center gap-6 text-zinc-400">
-                        <button class="hover:text-gold transition"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
-                        <button class="hover:text-gold transition"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                    <div class="flex items-center gap-4 cursor-pointer" onclick="toggleAuthModal()">
+                        <div class="text-right hidden md:block"><p class="text-[9px] text-zinc-400 font-bold uppercase tracking-widest leading-none">Access</p><p class="text-[11px] font-bold uppercase">Atelier</p></div>
                     </div>
-                    <div class="flex items-center gap-4 border-l dark:border-zinc-800 pl-6">
-                        <!-- FUNCTIONAL LOGIN BUTTON -->
-                        <div class="text-right hidden md:block cursor-pointer group" onclick="toggleAuthModal()">
-                            <p class="text-[9px] text-zinc-400 uppercase font-bold tracking-widest group-hover:text-gold transition">Welcome</p>
-                            <p class="text-[11px] font-bold dark:text-white uppercase">Log In / Register</p>
-                        </div>
-                        <div class="relative group cursor-pointer" onclick="animateCart()">
-                            <i data-lucide="shopping-bag" id="cart-icon" class="w-6 h-6 text-zinc-800 dark:text-zinc-200 transition-transform"></i>
-                            <span id="cart-count" class="absolute -top-2 -right-2 bg-gold text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">5</span>
-                        </div>
+                    <div class="relative" onclick="animateCart()">
+                        <i data-lucide="shopping-bag" id="cart-icon" class="w-6 h-6 transition-transform"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-gold text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">15</span>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <div class="bg-white dark:bg-zinc-950 py-4 px-6 lg:px-12 border-b dark:border-zinc-900">
+        <!-- SEARCH BAR -->
+        <div class="bg-white dark:bg-zinc-950 py-4 px-6 lg:px-12 border-b dark:border-zinc-900 relative z-10">
             <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center w-full md:max-w-2xl overflow-hidden border border-transparent focus-within:border-gold transition-all">
-                    <button class="px-6 py-3 text-[11px] font-bold uppercase tracking-widest border-r dark:border-zinc-800 text-zinc-500 whitespace-nowrap">All Categories</button>
-                    <input type="text" placeholder="Search curated technology..." class="flex-grow px-6 bg-transparent outline-none text-sm italic">
-                    <button class="px-6 text-zinc-400 hover:text-gold transition"><i data-lucide="search" class="w-5 h-5"></i></button>
+                <div class="relative w-full md:max-w-2xl">
+                    <div class="bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center overflow-hidden focus-within:ring-1 focus-within:ring-gold transition-all">
+                        <input type="text" id="search-input" placeholder="Search curated tech..." class="flex-grow px-8 bg-transparent outline-none text-sm italic py-3" oninput="handleSearch(this.value)">
+                        <button class="px-6 text-zinc-400 hover:text-gold transition"><i data-lucide="search" class="w-5 h-5"></i></button>
+                    </div>
+                    <div id="search-results" class="hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl border dark:border-zinc-800 z-[150] max-h-80 overflow-y-auto animate-fade-in"></div>
                 </div>
-                <div class="flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
-                    <div>FREE SHIPPING OVER $199</div>
-                    <div>30 DAYS MONEY BACK</div>
-                    <div>100% SECURE PAYMENT</div>
+                <div class="flex items-center gap-8 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+                    <div class="hidden lg:block">FREE SHIPPING OVER $199</div><div class="hidden lg:block">30 DAYS MONEY BACK</div><div>100% SECURE PAYMENT</div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- HERO BENTO SYSTEM -->
+    <!-- HERO SECTION (FIXED ALIGNMENT) -->
     <main class="max-w-[1440px] mx-auto py-12 px-6 lg:px-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Sidebar -->
             <div class="reveal lg:row-span-2 bg-white dark:bg-zinc-900 rounded-[2rem] p-8 shadow-sm border border-zinc-50 dark:border-zinc-800 hidden lg:block">
-                <h3 class="text-gold serif italic text-xl mb-8">Seasonal Selection</h3>
-                <ul class="space-y-6 text-sm font-medium text-zinc-500">
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Laptops <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">PC & Computers <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Cell Phones <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Tablets <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Gaming & VR <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Networking <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Cameras <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Sounds <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="hover:text-gold hover:translate-x-2 transition cursor-pointer flex justify-between items-center group">Office <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i></li>
-                    <li class="text-rose-600 font-bold tracking-widest pt-4">CLEARANCE</li>
+                <h3 class="text-gold serif italic text-xl mb-8">Atelier Selection</h3>
+                <ul class="space-y-4 text-[13px] font-medium text-zinc-500">
+                    <li class="hover:text-gold transition cursor-pointer">Laptops</li>
+                    <li class="hover:text-gold transition cursor-pointer">PC & Computers</li>
+                    <li class="hover:text-gold transition cursor-pointer">Cell Phones</li>
+                    <li class="hover:text-gold transition cursor-pointer">Tablets</li>
+                    <li class="hover:text-gold transition cursor-pointer">Gaming & VR</li>
+                    <li class="hover:text-gold transition cursor-pointer">Networking</li>
+                    <li class="hover:text-gold transition cursor-pointer">Cameras</li>
+                    <li class="hover:text-gold transition cursor-pointer">Sounds</li>
+                    <li class="hover:text-gold transition cursor-pointer">Office</li>
+                    <li class="hover:text-gold transition cursor-pointer">Storage, USB</li>
+                    <li class="hover:text-gold transition cursor-pointer">Accessories</li>
+                    <li class="text-rose-600 font-bold tracking-widest pt-4 uppercase">Clearance</li>
                 </ul>
             </div>
-            <div class="reveal md:col-span-2 relative bg-zinc-200 dark:bg-zinc-800 rounded-[2.5rem] p-12 overflow-hidden flex flex-col justify-center min-h-[450px] group shadow-2xl">
-                <div class="relative z-10 max-w-sm space-y-6">
-                    <h2 class="text-5xl md:text-7xl leading-none text-zinc-800 dark:text-white serif italic">The Art of <br> Silence</h2>
-                    <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">Experience Boso Over-Ear mastery. <br>Low Latency. High Fidelity. <br> Pure Luxury.</p>
-                    <button onclick="animateCart()" class="bg-zinc-900 dark:bg-white dark:text-black text-white px-10 py-4 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold transition-all active:scale-95">Acquire Now</button>
+            
+            <!-- FIXED HERO CARD -->
+            <div class="reveal md:col-span-2 relative bg-zinc-200 dark:bg-zinc-800 rounded-[2.5rem] p-8 md:p-16 overflow-hidden min-h-[450px] md:min-h-[550px] flex flex-col justify-center group shadow-xl">
+                <div class="relative z-10 max-w-[280px] sm:max-w-sm md:max-w-md space-y-6">
+                    <span class="text-gold uppercase tracking-[0.3em] text-[10px] font-black">Elite Series</span>
+                    <h2 class="text-4xl sm:text-5xl md:text-7xl leading-[1.1] md:leading-none serif italic tracking-tighter text-zinc-800 dark:text-white">The Art of <br> Silence</h2>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-sm md:text-base leading-relaxed serif italic">Experience Boso Elite mastery. <br> High Fidelity. Pure Luxury.</p>
+                    <button onclick="location.href='products.html'" class="w-fit bg-zinc-900 dark:bg-white dark:text-black text-white px-8 md:px-10 py-3 md:py-4 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gold transition-all active:scale-95">Acquire Now</button>
                 </div>
-                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000" class="absolute right-[-10%] bottom-0 w-2/3 object-contain mix-blend-multiply dark:mix-blend-screen transition-transform duration-1000 group-hover:scale-110 opacity-90" alt="Headphones">
+                <!-- Fixed Image Positioning -->
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000" 
+                     class="absolute right-[-5%] sm:right-[-10%] bottom-0 w-3/4 sm:w-2/3 md:w-[60%] object-contain mix-blend-multiply dark:mix-blend-screen transition-transform duration-1000 group-hover:scale-105 opacity-90" 
+                     alt="Headphones">
             </div>
-            <div class="reveal bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border dark:border-zinc-800 flex flex-col justify-between group overflow-hidden shadow-sm product-card">
-                <div class="z-10"><p class="text-[10px] uppercase font-black text-gold tracking-widest mb-2">Xomia Elite</p><h2 class="text-2xl leading-tight serif italic">Vanguard Sport</h2><button class="mt-4 text-[10px] font-bold border-b border-gold pb-1 uppercase tracking-widest group-hover:text-gold transition">Shop Series</button></div>
-                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600" class="w-40 self-end grayscale group-hover:grayscale-0 transition-all duration-700 img-zoom" alt="Watch">
+
+            <!-- Secondary Cards -->
+            <div class="reveal bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border dark:border-zinc-800 flex flex-col justify-between group overflow-hidden">
+                <div class="z-10"><p class="text-[10px] uppercase font-black text-gold tracking-widest mb-2">Xomia Elite</p><h2 class="text-2xl leading-tight serif italic">Vanguard Sport</h2></div>
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600" class="w-40 self-end grayscale group-hover:grayscale-0 transition-all duration-700" alt="Watch">
             </div>
-            <div class="reveal bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 flex items-center justify-between border dark:border-zinc-800 group shadow-sm product-card">
-                <div><h3 class="serif italic text-xl">Sono Playgo 5</h3><p class="text-emerald-600 font-bold text-sm mt-1">$569.00</p><a href="#" class="text-[9px] font-bold uppercase tracking-widest mt-4 block text-zinc-400 hover:text-gold transition">Discover Now</a></div>
+            <div class="reveal bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 flex items-center justify-between border dark:border-zinc-800 group shadow-sm">
+                <div><h3 class="serif italic text-xl">Sono Playgo 5</h3><p class="text-emerald-600 font-bold text-sm mt-1">$569.00</p></div>
                 <img src="https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?q=80&w=400" class="w-24 group-hover:scale-110 transition duration-500" alt="Console">
             </div>
             <div class="reveal bg-zinc-900 rounded-[2.5rem] p-8 flex flex-col justify-between text-white relative overflow-hidden group">
@@ -243,210 +246,258 @@
     </main>
 
     <!-- BRANDS EDITORIAL -->
-    <section class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-12 bg-white dark:bg-zinc-900 rounded-[3rem] my-12">
+    <section class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-12 bg-white dark:bg-zinc-900 rounded-[3rem] my-12 shadow-sm border dark:border-zinc-800">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <div>
-                <div class="flex justify-between items-center mb-12 border-b dark:border-zinc-800 pb-6"><h2 class="text-2xl font-bold uppercase tracking-tighter">Featured Brands</h2><a href="#" class="text-[10px] font-bold uppercase text-zinc-400 hover:text-gold transition">View All</a></div>
+                <div class="flex justify-between items-center mb-12 border-b dark:border-zinc-800 pb-6"><h2 class="text-2xl font-bold uppercase tracking-tighter serif">Featured Brands</h2><a href="#" class="text-[10px] font-bold uppercase text-zinc-400 hover:text-gold transition">All Brands</a></div>
                 <div class="grid grid-cols-3 md:grid-cols-5 gap-12 items-center opacity-40 hover:opacity-100 transition-all">
                     <img src="./assets/JetBrains-Logo.wine.svg" class="h-10 object-contain grayscale hover:grayscale-0 transition" alt="Jet">
-                    <img src="./assets/msi-gaming-series-seeklogo.svg" class="h-10 object-contain grayscale" alt="Msi">
-                    <img src="./assets/snyk-svgrepo-com.svg" class="h-10 object-contain grayscale" alt="Snyk">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" class="h-10 object-contain grayscale" alt="Stripe">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1667px-Apple_logo_black.svg.png" class="h-10 object-contain grayscale dark:invert" alt="Apple">
+                    <img src="./assets/msi-gaming-series-seeklogo.svg" class="h-10 object-contain grayscale hover:grayscale-0 transition" alt="Msi">
+                    <img src="./assets/snyk-svgrepo-com.svg" class="h-10 object-contain grayscale hover:grayscale-0 transition" alt="Snyk">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" class="h-10 object-contain grayscale hover:grayscale-0 transition" alt="Stripe">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1667px-Apple_logo_black.svg.png" class="h-10 object-contain grayscale dark:invert hover:grayscale-0 transition" alt="Apple">
                 </div>
             </div>
             <div>
-                <div class="flex justify-between items-center mb-12 border-b dark:border-zinc-800 pb-6"><h2 class="text-2xl font-bold uppercase tracking-tighter">Top Categories</h2><div class="flex gap-2"><button class="w-8 h-8 rounded-full border dark:border-zinc-800 flex items-center justify-center hover:bg-gold transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button class="w-8 h-8 rounded-full border dark:border-zinc-800 flex items-center justify-center hover:bg-gold transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div></div>
+                <div class="flex justify-between items-center mb-12 border-b dark:border-zinc-800 pb-6"><h2 class="text-2xl font-bold uppercase tracking-tighter serif">Top Categories</h2></div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="laptop" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Laptops</span></div>
-                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="gamepad-2" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">PC Gaming</span></div>
-                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="headphones" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Headphones</span></div>
-                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="monitor" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Monitors</span></div>
+                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="gamepad-2" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Gaming</span></div>
+                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="headphones" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Audio</span></div>
+                    <div class="text-center group cursor-pointer"><div class="aspect-square bg-zinc-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-105 group-hover:shadow-xl group-hover:bg-white dark:group-hover:bg-zinc-700"><i data-lucide="monitor" class="w-8 h-8 text-zinc-300 group-hover:text-gold transition"></i></div><span class="text-[11px] font-bold uppercase tracking-widest">Visual</span></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- DEALS OF THE DAY -->
-    <section class="reveal max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
+    <!-- LIMITED TIME DEALS -->
+    <section id="deals" class="reveal max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
         <div class="bg-white dark:bg-zinc-900 rounded-[3rem] shadow-2xl overflow-hidden border dark:border-zinc-800">
             <div class="bg-emerald-600 px-10 py-6 text-white flex justify-between items-center"><h2 class="text-xl font-bold uppercase tracking-widest serif italic">Limited Time Deals</h2><span class="text-[10px] tracking-[0.4em] font-light opacity-60 uppercase">Ending Soon</span></div>
             <div class="p-12 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div class="relative flex items-center justify-center group"><div class="absolute top-0 left-0 bg-gold text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg z-10">SAVE $199.00</div><img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&q=80&w=800" class="w-full h-[400px] object-contain transition duration-1000 group-hover:scale-105" alt="Phone"></div>
-                <div class="space-y-8"><h1 class="text-4xl serif italic">Xioma Redmi Note 11 Pro Elite</h1><div class="flex items-center gap-6"><span class="text-4xl font-black text-rose-600">$569.00</span><span class="text-xl text-zinc-400 line-through font-light italic">$759.00</span></div>
-                    <div class="pt-8 border-t dark:border-zinc-800"><p class="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-zinc-400 italic">EXPIRES IN:</p><div class="flex gap-6" id="timer"><div class="text-center"><p class="text-4xl font-serif" id="days">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Days</p></div><div class="text-center"><p class="text-4xl font-serif text-gold" id="hours">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Hours</p></div><div class="text-center"><p class="text-4xl font-serif" id="minutes">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Mins</p></div><div class="text-center"><p class="text-4xl font-serif" id="seconds">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Secs</p></div></div></div>
-                    <div class="space-y-3"><div class="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden"><div class="bg-emerald-600 h-full w-[35%]"></div></div><p class="text-[11px] font-bold text-zinc-400 uppercase tracking-widest text-center md:text-left">Sold: <span class="text-zinc-900 dark:text-white">26/75 Pieces</span></p></div>
+                <div class="space-y-8">
+                    <h1 class="text-4xl serif italic">Xioma Pro Elite</h1>
+                    <div class="flex items-center gap-6"><span class="text-4xl font-black text-rose-600">$569.00</span><span class="text-xl text-zinc-400 line-through font-light italic">$759.00</span></div>
+                    <div class="pt-8 border-t dark:border-zinc-800">
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-zinc-400 italic">EXPIRES IN:</p>
+                        <div class="flex gap-6" id="timer-display">
+                            <div class="text-center"><p class="text-4xl font-serif" id="days">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Days</p></div>
+                            <div class="text-center"><p class="text-4xl font-serif text-gold" id="hours">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Hrs</p></div>
+                            <div class="text-center"><p class="text-4xl font-serif" id="minutes">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Min</p></div>
+                            <div class="text-center"><p class="text-4xl font-serif" id="seconds">00</p><p class="text-[9px] font-bold text-zinc-400 uppercase">Sec</p></div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden"><div id="inventory-bar" class="bg-emerald-600 h-full w-[65%] transition-all duration-1000"></div></div>
+                        <p class="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">Inventory: <span id="inventory-count" class="text-zinc-900 dark:text-white">48/75 Pieces</span></p>
+                    </div>
+                    <button onclick="animateCart(); updateInventory()" class="w-full py-4 bg-zinc-900 dark:bg-white dark:text-black text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-gold transition-all active:scale-95">Acquire Item</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- PAGES UNIVERSE -->
-    <section id="editorial" class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="group relative aspect-[4/5] rounded-[2rem] overflow-hidden cursor-pointer shadow-xl">
-            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Atelier">
-            <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/80 to-transparent flex flex-col justify-end p-10">
-                <h4 class="text-gold uppercase text-[10px] font-black tracking-[0.3em] mb-2">Our Atelier</h4>
-                <h2 class="text-white text-3xl font-serif italic mb-4">Crafting the <br> Future</h2>
-                <a href="#" class="text-white font-bold text-[10px] uppercase border-b border-gold self-start pb-1">About Us</a>
+    <!-- UNIVERSE SECTION -->
+    <section id="universe" class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-12">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8 border-b dark:border-zinc-800 pb-12">
+            <div class="space-y-4">
+                <span class="text-gold uppercase tracking-[0.4em] text-[10px] font-black">Atelier Directory</span>
+                <h2 class="text-5xl md:text-7xl serif italic leading-none">The TSIG <br> <span class="text-gold">Universe</span></h2>
+            </div>
+            <div class="flex flex-wrap gap-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                <button onclick="filterUniverse('all')" class="orbit-btn active border-b border-transparent hover:text-gold transition pb-1">All Pillars</button>
+                <button onclick="filterUniverse('heritage')" class="orbit-btn border-b border-transparent hover:text-gold transition pb-1">Heritage</button>
+                <button onclick="filterUniverse('innovation')" class="orbit-btn border-b border-transparent hover:text-gold transition pb-1">Innovation</button>
+                <button onclick="filterUniverse('services')" class="orbit-btn border-b border-transparent hover:text-gold transition pb-1">Services</button>
+                <button onclick="filterUniverse('exclusive')" class="orbit-btn border-b border-transparent hover:text-gold transition pb-1">Exclusive</button>
             </div>
         </div>
-        <div class="group relative aspect-[4/5] rounded-[2rem] overflow-hidden cursor-pointer shadow-xl">
-            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Journal">
-            <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/80 to-transparent flex flex-col justify-end p-10">
-                <h4 class="text-gold uppercase text-[10px] font-black tracking-[0.3em] mb-2">The Journal</h4>
-                <h2 class="text-white text-3xl font-serif italic mb-4">Editorial <br> Curations</h2>
-                <a href="#" class="text-white font-bold text-[10px] uppercase border-b border-gold self-start pb-1">Read Journal</a>
+
+        <div id="universe-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="universe-card group relative aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-xl" data-category="heritage">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Heritage">
+                <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/90 via-luxuryBlack/20 to-transparent flex flex-col justify-end p-8 text-white">
+                    <h3 class="text-2xl font-serif italic mb-2">Our Story</h3>
+                    <a href="#" class="font-bold text-[9px] uppercase border-b border-gold self-start pb-1">Discover</a>
+                </div>
             </div>
-        </div>
-        <div class="group relative aspect-[4/5] rounded-[2rem] overflow-hidden cursor-pointer shadow-xl">
-            <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Concierge">
-            <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/80 to-transparent flex flex-col justify-end p-10">
-                <h4 class="text-gold uppercase text-[10px] font-black tracking-[0.3em] mb-2">Service</h4>
-                <h2 class="text-white text-3xl font-serif italic mb-4">Private <br> Concierge</h2>
-                <a href="#" class="text-white font-bold text-[10px] uppercase border-b border-gold self-start pb-1">Inquire</a>
+            <div class="universe-card group relative aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-xl" data-category="innovation">
+                <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Journal">
+                <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/90 via-luxuryBlack/20 to-transparent flex flex-col justify-end p-8 text-white">
+                    <h3 class="text-2xl font-serif italic mb-2">The Journal</h3>
+                    <a href="#" class="font-bold text-[9px] uppercase border-b border-gold self-start pb-1">Read</a>
+                </div>
+            </div>
+            <div class="universe-card group relative aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-xl" data-category="services">
+                <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Concierge">
+                <div class="absolute inset-0 bg-gradient-to-t from-luxuryBlack/90 via-luxuryBlack/20 to-transparent flex flex-col justify-end p-8 text-white">
+                    <h3 class="text-2xl font-serif italic mb-2">Concierge</h3>
+                    <a href="contact.html" target="_blank" class="font-bold text-[9px] uppercase border-b border-gold self-start pb-1">Inquire</a>
+                </div>
+            </div>
+            <div class="universe-card group relative aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-xl" data-category="innovation">
+                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover img-zoom opacity-80" alt="Lab">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent flex flex-col justify-end p-8 text-white">
+                    <h3 class="text-2xl font-serif italic mb-2">The Lab</h3>
+                    <a href="#" class="font-bold text-[9px] uppercase border-b border-white self-start pb-1">View Research</a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- SEO CONTENT -->
-    <section class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-32 bg-[#F2F2F2] dark:bg-zinc-900/80 my-12 rounded-[3rem]">
-        <h2 class="text-3xl serif italic mb-10 leading-tight">TSIG – <span class="text-gold">#1</span> Online Marketplace for <br> curated technology.</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-zinc-500 font-medium">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae posuere mi. Quisque iaculis dignissim scelerisque. Morbi condimentum sagittis leo vitae tempor. Suspendisse in dolor odio. Sed aliquet ac lacus ut luctus. Fusce mattis sollicitudin sem, id lobortis nibh ullamcorper a. Donec vehicula dolor et arcu consequat mattis. Fusce mattis nec nulla in scelerisque.</p>
-            <p>Morbi pharetra sem mauris, nec aliquet ipsum vestibulum suscipit. Curabitur non euismod dui. Proin eget justo eu erat luctus placerat. Nam rhoncus ipsum ac enim faucibus, at consequat ante maximus. Vestibulum at nibh ac odio ultrices varius. Duis vitae libero mollis, lobortis ligula id, varius erat. Sed id odio dictum, laoreet enim ac, commodo magna. Praesent sodales porttitor maximus. Sed a lacus felis. Maecenas consectetur consequat orci scelerisque malesuada. Fusce vel orci eu tortor consequat mattis quis at ante. Class aptent taciti sociosqu ad litora torquent per conubi,</p>
+    <!-- ATELIER EXPERIENCE -->
+    <section class="reveal max-w-[1440px] mx-auto py-24 px-6 text-center">
+        <h2 class="text-5xl serif italic mb-16 text-zinc-400 font-light tracking-tighter">The Atelier Experience</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-zinc-500 italic text-sm leading-relaxed">
+            <div class="space-y-4">
+                <p>"The precision of TSIG products is unmatched. A fusion of high-fashion and raw power."</p>
+                <p class="text-[9px] font-black uppercase tracking-widest not-italic text-gold">— Vogue Tech Edition</p>
+            </div>
+            <div class="space-y-4">
+                <p>"The TSIG concierge makes global luxury tech sourcing feel like a private art viewing."</p>
+                <p class="text-[9px] font-black uppercase tracking-widest not-italic text-gold">— Global Executive</p>
+            </div>
+            <div class="space-y-4">
+                <p>"Finally, a tech marketplace that values whitespace and editorial curation as much as specs."</p>
+                <p class="text-[9px] font-black uppercase tracking-widest not-italic text-gold">— Minimalist Digest</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEO & STORY -->
+    <section id="editorial" class="reveal max-w-[1440px] mx-auto py-24 px-6 lg:px-32 bg-[#F2F2F2] dark:bg-zinc-900/80 my-12 rounded-[3rem]">
+        <h2 class="text-3xl serif italic mb-10 leading-tight tracking-tight">TSIG – <span class="text-gold">#1</span> Online Marketplace for curated technology.</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-zinc-500 font-medium italic">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae posuere mi. Quisque iaculis dignissim scelerisque. Morbi condimentum sagittis leo vitae tempor. Suspendisse in dolor odio. Sed aliquet ac lacus ut luctus. Fusce mattis sollicitudin sem, id lobortis nibh ullamcorper a.</p>
+            <p>Morbi pharetra sem mauris, nec aliquet ipsum vestibulum suscipit. Curabitur non euismod dui. Proin eget justo eu erat luctus placerat. Nam rhoncus ipsum ac enim faucibus, at consequat ante maximus. Vestibulum at nibh ac odio ultrices varius. Duis vitae libero mollis.</p>
         </div>
         <div class="mt-12"><a href="#" class="text-xs font-bold uppercase tracking-widest border-b border-gold pb-1 hover:text-gold transition">Discover our Story</a></div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="reveal bg-zinc-950 text-white pt-24 pb-12 px-6 lg:px-12 mt-24">
-        <div class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 border-b border-zinc-800 pb-20">
+    <footer class="bg-zinc-950 text-white pt-24 pb-12 px-6 lg:px-12 mt-24">
+        <div class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 border-b border-zinc-900 pb-20">
             <div class="lg:col-span-4 space-y-10">
-                <h2 class="text-2xl font-bold uppercase tracking-tighter">TSIG Elite</h2>
-                <div class="space-y-2"><p class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.3em]">Hotline 24/7</p><p class="text-4xl font-black text-emerald-500 leading-none">(234) 9138 3322 91</p></div>
-                <div class="text-zinc-500 text-sm italic max-w-xs space-y-1 font-medium leading-relaxed"><p>257 Thatcher Road St, Brooklyn, Manhattan,</p><p>NY 10092</p><p class="hover:text-emerald-500 transition cursor-pointer">contact@Tsigtechmart.com</p></div>
-                <div class="flex gap-6 pt-4"><i data-lucide="twitter" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i><i data-lucide="facebook" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i><i data-lucide="instagram" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i><i data-lucide="youtube" class="w-4 h-4 text-zinc-500 hover:text-white transition cursor-pointer"></i></div>
+                <h2 class="text-2xl font-bold uppercase tracking-tighter italic serif">TSIG Elite</h2>
+                <div class="space-y-1"><p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Hotline 24/7</p><p class="text-3xl font-black text-emerald-500 leading-none tracking-tighter">(234) 9138 3322 91</p></div>
+                <div class="text-zinc-500 text-sm italic max-w-xs space-y-1 font-medium font-sans"><p>257 Thatcher Road St, Brooklyn, Manhattan, NY 10092</p><p class="hover:text-gold transition cursor-pointer lowercase">thesamuelifeanyigroup@gmail.com</p></div>
             </div>
-            <div class="lg:col-span-2 space-y-8"><h4 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-600">Explore</h4><ul class="space-y-4 text-sm text-zinc-400 font-medium"><li><a href="#" class="hover:text-emerald-500 transition">Laptops</a></li><li><a href="#" class="hover:text-emerald-500 transition">PC Gaming</a></li><li><a href="#" class="hover:text-emerald-500 transition">Atelier Audio</a></li><li><a href="#" class="hover:text-emerald-500 transition">Cell Phones</a></li><li><a href="#" class="hover:text-emerald-500 transition">Gaming & VR</a></li></ul></div>
-            <div class="lg:col-span-6 space-y-10">
-                <h4 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-600">Join the TSIG Atelier</h4>
-                <p class="text-xl md:text-2xl serif italic text-zinc-300">Subscribe & get <span class="text-rose-500">10% OFF</span> for your first order.</p>
-                <form onsubmit="handleAuth(event)" class="relative border-b border-zinc-800 pb-4 max-w-lg"><input type="email" placeholder="Enter email address" class="bg-transparent w-full outline-none italic text-lg py-2"><button class="absolute right-0 top-1/2 -translate-y-1/2 text-gold text-xs font-bold uppercase tracking-[0.2em] hover:text-white transition">Subscribe</button></form>
-            </div>
+            <div class="lg:col-span-2 space-y-6"><h3 class="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Company</h3><ul class="space-y-4 text-[13px] text-zinc-400"><li>About Tsig</li><li>Contact</li><li>Career</li><li>Blog</li></ul></div>
+            <div class="lg:col-span-2 space-y-6"><h3 class="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Help Center</h3><ul class="space-y-4 text-[13px] text-zinc-400"><li>Service</li><li>Policy</li><li>Terms</li><li>FAQs</li></ul></div>
+            <div class="lg:col-span-2 space-y-6"><h3 class="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Partner</h3><ul class="space-y-4 text-[13px] text-zinc-400"><li>Become Seller</li><li>Affiliate</li><li>Partnership</li></ul></div>
+            <div class="lg:col-span-2 space-y-6"><h3 class="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Explore</h3><ul class="space-y-4 text-[13px] text-zinc-400"><li>Laptops</li><li>Audio</li><li>Wearables</li></ul></div>
         </div>
-        <div class="max-w-[1440px] mx-auto pt-12 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">
-            <p class="text-[10px] font-bold tracking-[0.3em]">© 2025 TSIG ATELIER MART NYC . ALL RIGHTS RESERVED</p>
-            <div class="flex items-center gap-8"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="h-4 invert" alt="Paypal"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-6 grayscale" alt="Mastercard"><img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" class="h-6 invert" alt="Stripe"><a href="#" class="text-[10px] font-bold tracking-widest text-emerald-500 underline uppercase">Mobile Site</a></div>
+        <div class="max-w-[1440px] mx-auto pt-10 flex flex-col md:flex-row justify-between items-center gap-6 opacity-30 text-[9px] uppercase tracking-[0.3em]">
+            <p>© 2026 TSIG ATELIER NYC . ALL RIGHTS RESERVED</p>
+            <div class="flex items-center gap-6"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="h-3 invert"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-5 grayscale"><a href="#" class="underline">Mobile Site</a></div>
         </div>
     </footer>
 
     <script>
         lucide.createIcons();
 
-        // 1. Auth Modal Functionality
-        const authModal = document.getElementById('auth-modal');
-        function toggleAuthModal() {
-            authModal.classList.toggle('hidden');
-            if(!authModal.classList.contains('hidden')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = 'auto';
-            }
+        // 1. Mobile & Search Toggle
+        function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('open'); }
+        function toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('hidden'); }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text); alert('Concierge line copied.'); }
+
+        // 2. Universe Dynamic Filtering
+        function filterUniverse(cat) {
+            const cards = document.querySelectorAll('.universe-card');
+            const btns = document.querySelectorAll('.orbit-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            if(event && event.target.classList.contains('orbit-btn')) event.target.classList.add('active');
+            cards.forEach(card => {
+                if (cat === 'all' || card.getAttribute('data-category') === cat) card.classList.remove('filtered-out');
+                else card.classList.add('filtered-out');
+            });
         }
 
-        function switchAuth(view) {
-            const loginForm = document.getElementById('form-login');
-            const registerForm = document.getElementById('form-register');
-            const tabLogin = document.getElementById('tab-login');
-            const tabRegister = document.getElementById('tab-register');
+        // 3. Search Simulation
+        const curatedItems = [
+            { name: "Xioma Redmi Note 11 Pro Elite", cat: "Smartphone", url: "products.html" },
+            { name: "Vanguard Sport Watch", cat: "Wearables", url: "products.html" },
+            { name: "Boso Elite Headphones", cat: "Audio", url: "products.html" },
+            { name: "Station 5 Elite", cat: "Gaming", url: "products.html" }
+        ];
 
-            if(view === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                tabLogin.classList.add('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
-                tabLogin.classList.remove('text-zinc-400');
-                tabRegister.classList.remove('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
-                tabRegister.classList.add('text-zinc-400');
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                tabRegister.classList.add('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
-                tabRegister.classList.remove('text-zinc-400');
-                tabLogin.classList.remove('border-b-2', 'border-gold', 'text-zinc-900', 'dark:text-white');
-                tabLogin.classList.add('text-zinc-400');
-            }
+        function handleSearch(q) {
+            const res = document.getElementById('search-results');
+            if (q.length < 2) { res.classList.add('hidden'); return; }
+            res.innerHTML = curatedItems.filter(i => i.name.toLowerCase().includes(q.toLowerCase())).map(i => `
+                <a href="${i.url}" class="flex justify-between items-center p-5 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition border-b dark:border-zinc-800">
+                    <div><p class="font-serif italic text-sm text-zinc-800 dark:text-zinc-100">${i.name}</p><p class="text-[9px] uppercase tracking-widest text-zinc-400">${i.cat}</p></div>
+                    <i data-lucide="arrow-up-right" class="w-3 h-3 text-gold"></i>
+                </a>
+            `).join('') || '<p class="p-5 text-xs italic text-zinc-400 text-center">No curations found...</p>';
+            res.classList.remove('hidden');
             lucide.createIcons();
         }
 
-        function handleAuth(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const originalText = btn.innerText;
-            btn.innerText = "Processing...";
-            btn.disabled = true;
-            
-            setTimeout(() => {
-                btn.innerText = "Welcome Back";
-                btn.classList.add('bg-emerald-600');
-                setTimeout(() => {
-                    toggleAuthModal();
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                    btn.classList.remove('bg-emerald-600');
-                }, 1000);
-            }, 1500);
+        // 4. Global Animation & Interaction
+        let bag = 15;
+        function animateCart() {
+            bag++; document.getElementById('cart-count').innerText = bag;
+            const icon = document.getElementById('cart-icon');
+            icon.classList.add('scale-150', 'text-gold');
+            setTimeout(() => icon.classList.remove('scale-150', 'text-gold'), 300);
         }
 
-        // 2. Dynamic Countdown Timer (162 Days)
-        function startTimer() {
-            const targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + 162);
-            
-            function tick() {
-                const now = new Date().getTime();
-                const diff = targetDate - now;
-                document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-                document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-                document.getElementById('minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        function updateInventory() {
+            const bar = document.getElementById('inventory-bar');
+            const count = document.getElementById('inventory-count');
+            let current = parseInt(count.innerText);
+            if(current > 0) {
+                current--;
+                count.innerText = `${current}/75 Pieces`;
+                bar.style.width = `${(current/75)*100}%`;
             }
-            setInterval(tick, 1000);
-            tick();
+        }
+
+        function startTimer() {
+            const target = new Date(); target.setDate(target.getDate() + 162);
+            setInterval(() => {
+                const diff = target - new Date().getTime();
+                document.getElementById('days').innerText = Math.floor(diff/(1000*60*60*24)).toString().padStart(2, '0');
+                document.getElementById('hours').innerText = Math.floor((diff%(1000*60*60*24))/(1000*60*60)).toString().padStart(2, '0');
+                document.getElementById('minutes').innerText = Math.floor((diff%(1000*60*60))/(1000*60)).toString().padStart(2, '0');
+                document.getElementById('seconds').innerText = Math.floor((diff%(1000*60))/1000).toString().padStart(2, '0');
+            }, 1000);
         }
         startTimer();
 
-        // 3. Scroll Reveal Animation
+        // 5. Acquisition Popups
+        const locations = ["London", "NYC", "Dubai", "Paris"];
+        const products = ["Vanguard Chrono", "Elite Audio", "M3 MacBook", "Station 5 Pro"];
+        setInterval(() => {
+            const popup = document.getElementById('live-notif');
+            document.getElementById('notif-text').innerText = `${products[Math.floor(Math.random()*products.length)]} purchased in ${locations[Math.floor(Math.random()*locations.length)]}`;
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 4500);
+        }, 18000);
+
+        // 6. Reveal & Theme
         const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // 4. Cart Simulation
-        let bagCount = 5;
-        function animateCart() {
-            bagCount++;
-            document.getElementById('cart-count').innerText = bagCount;
-            const icon = document.getElementById('cart-icon');
-            icon.classList.add('scale-125', 'text-gold');
-            setTimeout(() => icon.classList.remove('scale-125', 'text-gold'), 300);
-        }
-
-        // 5. Theme Toggler
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        themeToggle.addEventListener('click', () => {
+        document.getElementById('theme-toggle').addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
             const isDark = document.documentElement.classList.contains('dark');
-            themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            document.getElementById('theme-icon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
             lucide.createIcons();
-            localStorage.setItem('luxury-theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
-        if (localStorage.getItem('luxury-theme') === 'dark') { 
-            document.documentElement.classList.add('dark'); 
-            themeIcon.setAttribute('data-lucide', 'sun'); 
-            lucide.createIcons(); 
+        if(localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+
+        function switchAuth(v) {
+            const tabs = [document.getElementById('tab-login'), document.getElementById('tab-register')];
+            if(v === 'register') { tabs[1].classList.add('border-b-2'); tabs[0].classList.remove('border-b-2'); }
+            else { tabs[0].classList.add('border-b-2'); tabs[1].classList.remove('border-b-2'); }
         }
+        function handleAuth(e) { e.preventDefault(); document.getElementById('auth-btn').innerText = "Established"; setTimeout(toggleAuthModal, 1000); }
     </script>
 </body>
 </html>
